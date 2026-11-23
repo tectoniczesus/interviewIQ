@@ -6,11 +6,23 @@
 .env.*.local
 backend/.env
 frontend/.env
-# .env.example files ARE meant to be committed (templates, no real values)
+# .env.example files are ignored on purpose: the local copies have held real
+# values. Variable names are documented in README.md section 3 instead.
+.env.example
 
-# application.yml has real API keys hardcoded directly in it (personal
-# preference, not the .env-based setup the rest of this project assumes)
+# application.yml holds only ${NAME} placeholders now; real values live in
+# backend/.env. Still ignored so nobody pastes a key back into it.
 backend/src/main/resources/application.yml
+
+# =========================================
+# AI / design tooling output
+# =========================================
+.agents/
+.claude/
+.playwright-mcp/
+.impeccable/
+frontend/.taste-skill/
+skills-lock.json
 
 # =========================================
 # Backend — Java / Maven
