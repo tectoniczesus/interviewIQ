@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { analyzeResume, getResume, getResumeAnalysis } from '../services/resumeApi'
 import ScoreCard from '../components/ScoreCard'
+import { Skeleton, SkeletonCard, SkeletonRing } from '../components/Skeleton'
 
 function Section({ title, items }) {
   if (!items || items.length === 0) return null
@@ -12,7 +13,7 @@ function Section({ title, items }) {
         {items.map((item, i) => (
           <li key={i} className="flex gap-2">
             <span className="text-ochre">·</span>
-            <span>{item}</span>
+            <span className="min-w-0 break-words">{item}</span>
           </li>
         ))}
       </ul>
@@ -71,20 +72,39 @@ export default function ResumeAnalysis() {
   }
 
   if (loading) {
-    return <div className="text-sm text-ash">Loading…</div>
+    return (
+      <div className="mx-auto max-w-3xl" role="status" aria-label="Loading analysis">
+        <Skeleton className="h-3 w-28" />
+        <Skeleton className="mt-3 h-7 w-1/2" />
+        <div className="card mt-6 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+          <SkeletonRing />
+          <SkeletonRing />
+        </div>
+        <div className="mt-4 space-y-4">
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      </div>
+    )
   }
 
   const canAnalyze = resume?.processingStatus === 'COMPLETED'
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link to="/resumes" className="text-xs text-ash hover:text-ochre">
+      <Link to="/resumes" className="text-xs text-ash hover:text-accent">
         ← Back to resumes
       </Link>
 
-      <div className="mt-2 flex items-center justify-between gap-4">
-        <h1 className="truncate font-display text-2xl font-semibold text-ink">{resume?.fileName}</h1>
-        <button onClick={handleAnalyze} disabled={analyzing || !canAnalyze} className="btn-primary shrink-0">
+      <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <h1 className="min-w-0 break-words font-display text-xl font-semibold text-ink sm:truncate sm:text-2xl">
+          {resume?.fileName}
+        </h1>
+        <button
+          onClick={handleAnalyze}
+          disabled={analyzing || !canAnalyze}
+          className="btn-primary w-full shrink-0 sm:w-auto"
+        >
           {analyzing ? 'Analyzing…' : analysis ? 'Re-analyze' : 'Analyze Resume'}
         </button>
       </div>
@@ -107,7 +127,7 @@ export default function ResumeAnalysis() {
 
       {analysis && (
         <div className="mt-6 space-y-4">
-          <div className="card flex items-center justify-center gap-10">
+          <div className="card flex flex-wrap items-center justify-center gap-6 sm:gap-10">
             <ScoreCard label="ATS Score" score={analysis.atsScore} />
             <ScoreCard label="Overall Score" score={analysis.overallScore} />
           </div>

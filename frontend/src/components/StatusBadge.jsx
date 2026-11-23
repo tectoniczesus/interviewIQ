@@ -1,6 +1,6 @@
 const styles = {
   UPLOADED: 'bg-line/60 text-ash',
-  PROCESSING: 'bg-ochre/10 text-ochre',
+  PROCESSING: 'bg-ochre/10 text-ochre-deep',
   COMPLETED: 'bg-verdant/10 text-verdant',
   FAILED: 'bg-brick/10 text-brick',
 }

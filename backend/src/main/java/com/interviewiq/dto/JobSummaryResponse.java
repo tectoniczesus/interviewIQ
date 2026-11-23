@@ -1,6 +1,7 @@
 package com.interviewiq.dto;
 
 import com.interviewiq.entity.Job;
+import com.interviewiq.entity.enums.ApplicationStatus;
 import com.interviewiq.entity.enums.JobSource;
 
 import java.time.Instant;
@@ -12,6 +13,7 @@ public record JobSummaryResponse(
         String company,
         JobSource source,
         String descriptionPreview,
+        ApplicationStatus applicationStatus,
         Instant createdAt
 ) {
     public static JobSummaryResponse from(Job job) {
@@ -24,6 +26,7 @@ public record JobSummaryResponse(
                 job.getCompany(),
                 job.getSource(),
                 preview,
+                job.getApplicationStatus(),
                 job.getCreatedAt()
         );
     }
