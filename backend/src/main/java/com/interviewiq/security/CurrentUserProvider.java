@@ -1,5 +1,6 @@
 package com.interviewiq.security;
 
+import com.interviewiq.exception.NotAuthenticatedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class CurrentUserProvider {
 
         if (authentication == null || !authentication.isAuthenticated()
                 || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
-            throw new IllegalStateException("No authenticated user in the current security context");
+            throw new NotAuthenticatedException("No authenticated user in the current security context");
         }
 
         return user;

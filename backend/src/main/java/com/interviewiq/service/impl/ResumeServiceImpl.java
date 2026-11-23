@@ -9,6 +9,7 @@ import com.interviewiq.repository.CoverLetterRepository;
 import com.interviewiq.repository.InterviewQuestionRepository;
 import com.interviewiq.repository.InterviewSessionRepository;
 import com.interviewiq.repository.JobMatchRepository;
+import com.interviewiq.repository.LearningRoadmapRepository;
 import com.interviewiq.repository.ResumeAnalysisRepository;
 import com.interviewiq.repository.ResumeRepository;
 import com.interviewiq.security.AuthenticatedUser;
@@ -41,6 +42,7 @@ public class ResumeServiceImpl implements ResumeService {
     private final CoverLetterRepository coverLetterRepository;
     private final InterviewSessionRepository interviewSessionRepository;
     private final InterviewQuestionRepository interviewQuestionRepository;
+    private final LearningRoadmapRepository learningRoadmapRepository;
 
     public ResumeServiceImpl(ResumeRepository resumeRepository,
                              ResumeFileValidator resumeFileValidator,
@@ -51,7 +53,8 @@ public class ResumeServiceImpl implements ResumeService {
                              JobMatchRepository jobMatchRepository,
                              CoverLetterRepository coverLetterRepository,
                              InterviewSessionRepository interviewSessionRepository,
-                             InterviewQuestionRepository interviewQuestionRepository) {
+                             InterviewQuestionRepository interviewQuestionRepository,
+                             LearningRoadmapRepository learningRoadmapRepository) {
         this.resumeRepository = resumeRepository;
         this.resumeFileValidator = resumeFileValidator;
         this.storageService = storageService;
@@ -62,6 +65,7 @@ public class ResumeServiceImpl implements ResumeService {
         this.coverLetterRepository = coverLetterRepository;
         this.interviewSessionRepository = interviewSessionRepository;
         this.interviewQuestionRepository = interviewQuestionRepository;
+        this.learningRoadmapRepository = learningRoadmapRepository;
     }
 
     @Override
@@ -132,6 +136,7 @@ public class ResumeServiceImpl implements ResumeService {
         });
         interviewSessionRepository.deleteAll(interviewSessionRepository.findByResumeId(resumeId));
         coverLetterRepository.deleteAll(coverLetterRepository.findByResumeId(resumeId));
+        learningRoadmapRepository.deleteAll(learningRoadmapRepository.findByJobMatchResumeId(resumeId));
         jobMatchRepository.deleteAll(jobMatchRepository.findByResumeIdOrderByCreatedAtDesc(resumeId));
         resumeAnalysisRepository.deleteAll(resumeAnalysisRepository.findByResumeIdOrderByCreatedAtDesc(resumeId));
 

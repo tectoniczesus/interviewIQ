@@ -2,8 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Colour tokens as RGB channels so Tailwind's opacity modifiers work (tailwind.config.js).
+   App-wide theme: Apple-style minimal, chosen by the user over the tasteskill deals (green-black-bone,
+   night and sky blue, lunar and bronze, cool grey and cobalt). "paper" is the ground and "ink" the
+   strong colour, so ink slabs (the Dashboard hero, the cover-letter composer) are near-black.
+   Every text pair is AA: Apple's #0071e3 and #248a3d fall short on #f5f5f7, so links use Apple's
+   #0066cc and the state tones are darkened a step. "accent" is the UI colour (links, hovers, focus,
+   progress); "ochre" is the amber state colour (mid scores, interviewing, warnings). */
+:root {
+  --c-paper: 245 245 247;        /* #f5f5f7 ground */
+  --c-surface: 255 255 255;      /* #ffffff cards */
+  --c-ink: 29 29 31;             /* #1d1d1f  15.5:1 */
+  --c-ash: 110 110 115;          /* #6e6e73  4.7:1 on ground */
+  --c-line: 210 210 215;         /* #d2d2d7 */
+  --c-accent: 0 102 204;         /* #0066cc  5.1:1 */
+  --c-ochre: 160 72 0;           /* #a04800  5.3:1 in its pill */
+  --c-ochre-deep: 160 72 0;
+  --c-verdant: 31 122 55;        /* #1f7a37  4.7:1 in its pill */
+  --c-brick: 196 0 26;           /* #c4001a  5.2:1 in its pill */
+  --c-accent-on-ink: 41 151 255; /* #2997ff  5.6:1 on #1d1d1f */
+  --c-verdant-on-ink: 48 209 88; /* #30d158  8.3:1 */
+  --c-ochre-on-ink: 255 159 10;  /* #ff9f0a  8.2:1 */
+  --c-brick-on-ink: 255 105 97;  /* #ff6961  6.0:1 */
+  /* Page hues, iOS-Settings style: each tool page owns one colour for its header tile, tint and
+     primary action. Darkened Apple system colours so white text on them passes 4.5:1. Teal and
+     orange instead of green and amber, which already mean "good" and "medium" scores. */
+  --c-hue-blue: 0 102 204;       /* #0066cc  Resumes        white 5.6:1 */
+  --c-hue-teal: 11 110 121;      /* #0b6e79  Jobs           white 6.0:1 */
+  --c-hue-orange: 184 68 15;     /* #b8440f  Interview prep white 5.4:1 */
+  --c-hue-gold: 138 101 0;       /* #8a6500  Roadmaps       white 5.3:1 */
+  --c-hue-pink: 194 24 91;       /* #c2185b  Cover letters  white 5.9:1 */
+  --c-chrome: 251 251 253;       /* #fbfbfd sidebar */
+  --c-chrome-ink: 29 29 31;
+  --c-chrome-muted: 110 110 115;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Instrument Sans";
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Instrument Sans";
+  --font-mono: var(--font-text);
+  --font-code: var(--font-text);
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease-enter: cubic-bezier(.22, 1, .36, 1);
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   @apply bg-paper text-ink font-sans antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3 {
@@ -11,11 +59,11 @@ h1, h2, h3 {
 }
 
 ::selection {
-  @apply bg-ochre/20 text-ink;
+  @apply bg-accent/25 text-ink;
 }
 
 *:focus-visible {
-  outline: 2px solid #B8842A;
+  outline: 2px solid rgb(var(--c-accent));
   outline-offset: 2px;
 }
 
@@ -29,26 +77,239 @@ h1, h2, h3 {
 
 @layer components {
   .card {
-    @apply rounded-lg border border-line bg-white p-4;
+    @apply rounded-xl border border-line bg-surface p-4 sm:p-5;
+  }
+
+  /* Clickable surface: same look as .card; lifts 2px on hover (rules further down). */
+  .card-link {
+    @apply rounded-xl border border-line bg-surface;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink/85 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink/85 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-md border border-line bg-white px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-ink/30 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center rounded-md border border-line bg-surface px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-ink/30 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-ghost-danger {
-    @apply inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-brick/80 transition-colors hover:bg-brick/10 hover:text-brick;
+    @apply inline-flex min-h-9 items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-brick/80 transition-colors hover:bg-brick/10 hover:text-brick;
   }
 
   .field {
-    @apply w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink placeholder:text-ash/60 focus:border-ink/30 focus:outline-none;
+    @apply w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink placeholder:text-ash focus:border-ink/30 focus:outline-none;
   }
 
   .eyebrow {
     @apply text-xs font-medium uppercase tracking-wide text-ash;
   }
+}
+/* Wipe-reveal for proportional bars (pipeline). Clip-path only, so no layout work. */
+@keyframes bar-reveal {
+  from { clip-path: inset(0 100% 0 0 round 9999px); }
+  to { clip-path: inset(0 0 0 0 round 9999px); }
+}
+
+.bar-reveal {
+  animation: bar-reveal 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Motion that explains state changes. Durations are short; reduced-motion is handled globally above. */
+@keyframes card-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes drawer-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card-settle { animation: card-settle 180ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.drawer-in { animation: drawer-in 220ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.scrim-in { animation: scrim-in 180ms ease-out both; }
+.fade-in { animation: fade-in 150ms ease-out both; }
+
+/* ---- Resumes & Cover Letters ------------------------------------------ */
+
+/* Disclosure that opens without animating height: the grid row goes 0fr -> 1fr.
+   Collapsed content is also removed from focus and assistive tech via visibility. */
+.disclose {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 300ms;
+}
+.disclose[data-open="true"] {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.disclose > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* A letter arriving: revealed top-down, like a page leaving the printer. Clip-path only. */
+@keyframes letter-reveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.letter-reveal {
+  animation: letter-reveal 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The row that was just added: a 2px ochre ring that fades once, drawn outside the
+   card so it never fights the card's own shadow or the focus outline. */
+@keyframes ring-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.ring-fade::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: calc(0.75rem + 4px);
+  border: 2px solid rgb(var(--c-accent));
+  pointer-events: none;
+  animation: ring-fade 1400ms ease-out 300ms both;
+}
+
+/* The page thumbnail's text lines light up one after another while a PDF is read. */
+@keyframes line-write {
+  0% { opacity: 0.15; }
+  35%, 70% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+.page-lines[data-busy="true"] .page-line {
+  animation: line-write 1500ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation-delay: calc(var(--i, 0) * 180ms);
+}
+
+/* First arrival of a list: a capped sibling stagger. Pages add this class once,
+   after the first load, so refetches never replay it. */
+.stagger > * {
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* Controls that sit on the ink slab (cover-letter composer). */
+.field-on-ink {
+  @apply min-h-10 max-w-full rounded-md border border-paper/20 bg-white/10 px-3 py-1.5 font-display text-base font-semibold text-paper transition-colors hover:border-paper/40 focus:border-accent-on-ink focus:outline-none;
+}
+.field-on-ink option {
+  color: #1d1d1f;
+  background: #ffffff;
+}
+.field-on-ink::placeholder {
+  color: rgb(246 247 243 / 0.6);
+  font-weight: 400;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger > * {
+    animation-delay: 0ms !important;
+  }
+  .page-lines[data-busy="true"] .page-line {
+    animation: none;
+    opacity: 0.6;
+  }
+  .ring-fade::after {
+    animation-duration: 0.01ms;
+  }
+}
+
+/* Selects on the ink slab draw their own chevron, inset from the edge, instead of
+   the browser's flush-right arrow. Text keeps clear of it via the right padding. */
+select.field-on-ink {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232997ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 16px 16px;
+}
+input.field-on-ink {
+  padding-right: 0.875rem;
+}
+
+/* ---- Apple-style faces, surfaces and the hover/press layer -------------- */
+/* Motion values from tasteskill references/motion.md: card lift 2px (180ms in, 120ms out), button
+   step 1px up, press 1px down at .985 (150 / 120 / 90ms), arrow 3px. Transform and opacity only;
+   hover moves only for a fine pointer. Faces and surfaces sit in Tailwind's layers so a page's
+   utilities (font-medium, a highlighted border-accent/40 card) still win over them. */
+
+@layer base {
+  h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  h1 { letter-spacing: -0.025em; }
+  .font-mono { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .font-code { font-family: var(--font-code), system-ui, sans-serif; }
+
+  /* White cards with a hairline and a whisper of shadow, no visible border. */
+  .card,
+  .card-link {
+    border-color: transparent;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.05), 0 1px 2px rgb(0 0 0 / 0.04);
+  }
+  .card-link {
+    transition: transform 120ms var(--ease), box-shadow 120ms var(--ease), border-color 120ms var(--ease);
+  }
+  .card-link:hover,
+  .card-link:focus-visible {
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
+    transition-duration: 180ms;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    border-radius: 9999px;
+    transition: background-color 120ms var(--ease), border-color 120ms var(--ease), transform 90ms var(--ease);
+  }
+  .btn-primary:hover,
+  .btn-secondary:hover { transition-duration: 150ms, 150ms, 90ms; }
+
+  .dash-arrow { transition: transform 120ms var(--ease), color 120ms var(--ease); }
+}
+
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled) { transform: translateY(1px) scale(.985); }
+
+@media (hover: hover) and (pointer: fine) {
+  .card-link:hover { transform: translateY(-2px); }
+  :is(.btn-primary, .btn-secondary):hover:not(:disabled) { transform: translateY(-1px); }
+  :is(.btn-primary, .btn-secondary):active:not(:disabled) { transform: translateY(1px) scale(.985); }
+  .group:hover .dash-arrow { transform: translateX(3px); transition-duration: 150ms; }
+}
+.group:focus-visible .dash-arrow { transform: translateX(3px); }
+
+/* The hero's one entrance on load: date, greeting, line, action, then the score settles.
+   About 1.1s in all, never replayed on a refetch (the elements stay mounted). */
+@keyframes dash-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dash-enter {
+  animation: dash-enter 640ms var(--ease-enter) both;
+  animation-delay: calc(var(--i, 0) * 110ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-enter { animation: none; }
+  :is(.card-link, .btn-primary, .btn-secondary, .dash-arrow) { transform: none !important; }
 }

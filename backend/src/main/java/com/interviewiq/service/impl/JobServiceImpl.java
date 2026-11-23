@@ -6,10 +6,12 @@ import com.interviewiq.entity.enums.JobSource;
 import com.interviewiq.exception.ResourceNotFoundException;
 import com.interviewiq.exception.UnauthorizedResourceException;
 import com.interviewiq.exception.ValidationException;
+import com.interviewiq.repository.ApplicationEventRepository;
 import com.interviewiq.repository.CoverLetterRepository;
 import com.interviewiq.repository.InterviewQuestionRepository;
 import com.interviewiq.repository.InterviewSessionRepository;
 import com.interviewiq.repository.JobMatchRepository;
+import com.interviewiq.repository.LearningRoadmapRepository;
 import com.interviewiq.repository.JobRepository;
 import com.interviewiq.security.AuthenticatedUser;
 import com.interviewiq.service.FirecrawlService;
@@ -33,6 +35,8 @@ public class JobServiceImpl implements JobService {
     private final CoverLetterRepository coverLetterRepository;
     private final InterviewSessionRepository interviewSessionRepository;
     private final InterviewQuestionRepository interviewQuestionRepository;
+    private final LearningRoadmapRepository learningRoadmapRepository;
+    private final ApplicationEventRepository applicationEventRepository;
 
     public JobServiceImpl(JobRepository jobRepository,
                           FirecrawlService firecrawlService,
@@ -41,7 +45,9 @@ public class JobServiceImpl implements JobService {
                           JobMatchRepository jobMatchRepository,
                           CoverLetterRepository coverLetterRepository,
                           InterviewSessionRepository interviewSessionRepository,
-                          InterviewQuestionRepository interviewQuestionRepository) {
+                          InterviewQuestionRepository interviewQuestionRepository,
+                          LearningRoadmapRepository learningRoadmapRepository,
+                          ApplicationEventRepository applicationEventRepository) {
         this.jobRepository = jobRepository;
         this.firecrawlService = firecrawlService;
         this.jobUrlValidator = jobUrlValidator;
@@ -50,6 +56,8 @@ public class JobServiceImpl implements JobService {
         this.coverLetterRepository = coverLetterRepository;
         this.interviewSessionRepository = interviewSessionRepository;
         this.interviewQuestionRepository = interviewQuestionRepository;
+        this.learningRoadmapRepository = learningRoadmapRepository;
+        this.applicationEventRepository = applicationEventRepository;
     }
 
     @Override
@@ -121,7 +129,9 @@ public class JobServiceImpl implements JobService {
         });
         interviewSessionRepository.deleteAll(interviewSessionRepository.findByJobId(jobId));
         coverLetterRepository.deleteAll(coverLetterRepository.findByJobId(jobId));
+        learningRoadmapRepository.deleteAll(learningRoadmapRepository.findByJobMatchJobId(jobId));
         jobMatchRepository.deleteAll(jobMatchRepository.findByJobIdOrderByCreatedAtDesc(jobId));
+        applicationEventRepository.deleteAll(applicationEventRepository.findByJobIdOrderByCreatedAtAsc(jobId));
 
         jobRepository.delete(job);
     }
